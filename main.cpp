@@ -1,3 +1,22 @@
+/*
+    Slackbot - csgo external linux cheat
+    Copyright (C) 2019  navewindre
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 #include <thread>
 #include <unistd.h>
 
@@ -50,19 +69,14 @@ int main( int argc, char** argv ) {
     sleep_for( 300ms );
   } while( !g_proc.Attach( ) );
 
-  for( ;; ) {
+  do {
+    U::PrintLine( "Waiting for modules %c", wait[ ++cur_wait % sizeof( wait ) ] );
+
     if( !g_proc.m_client )
       g_proc.m_client = g_proc.FindModule( "client_panorama_client.so" );
     if( !g_proc.m_engine )
       g_proc.m_engine = g_proc.FindModule( "engine_client.so" );
-
-    U::PrintLine( "Waiting for modules %c", wait[ ++cur_wait % sizeof( wait ) ] );
-
-    if( g_proc.m_client && g_proc.m_engine )
-      break;
-      
-      sleep_for( 300ms );
-  }
+  } while( !g_proc.m_client || !g_proc.m_engine );
 
   for( ;; ) {
     sleep_for( 300ms );
