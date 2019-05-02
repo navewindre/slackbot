@@ -60,6 +60,8 @@ int main( int argc, char** argv ) {
 
     if( g_proc.m_client && g_proc.m_engine )
       break;
+      
+      sleep_for( 300ms );
   }
 
   for( ;; ) {
