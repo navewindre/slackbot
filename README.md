@@ -7,7 +7,9 @@ requires gcc5.0+, cmake 3.0+, glibc2.23+
 ```
 
 slackbot$: cmake .
+
 slackbot$: make
+
 slackbot$: ./slackbot
 
 written completely on slackware linux
