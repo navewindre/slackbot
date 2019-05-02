@@ -1,5 +1,5 @@
-#Slackbot
-###by navewindre
+# Slackbot
+by navewindre
 
 compiling/running instructions:
 ```
