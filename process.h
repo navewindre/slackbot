@@ -7,6 +7,8 @@
 namespace P {
 struct Module_t {
   uintptr_t start, end;
+  size_t    Size( ) { return end - start; }
+  operator bool( ) { return !!end && !!start; }
 };
 
 class Process {
@@ -43,7 +45,7 @@ public:
 
 public:
   Module_t FindModule( const char* module );
-  uintptr_t PatternSearch( uintptr_t, std::string pattern, size_t offset );
+  uintptr_t PatternSearch( Module_t mod, std::string pattern, size_t offset );
 
 public:
   Module_t m_client;

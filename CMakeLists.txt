@@ -1,6 +1,7 @@
 add_executable(slackbot
   main.cpp
   process.cpp
+  entity_list.cpp
   )
 
 target_include_directories(slackbot PRIVATE

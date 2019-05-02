@@ -1,3 +1,4 @@
+#pragma once
 #include "process.h"
 
 namespace U {
@@ -9,7 +10,9 @@ public:
   Address( uintptr_t ptr ) : m_ptr( ptr ) {}
   Address( void* ptr ) : m_ptr( ( uintptr_t )( ptr ) ) {}
 
-  template < typename other > Address( Address< other >&& other ) m_ptr( other.Ptr( ) ) {}
+  template < typename other_type > Address( Address< other_type >&& other ) {
+    m_ptr = other.Ptr( );
+  }
 
   uintptr_t Ptr( ) { return m_ptr; }
 
@@ -34,3 +37,5 @@ public:
   Address< t > operator-( int offset ) { return Address< t >( m_ptr - offset ); }
 };
 }
+
+template < typename t > using ptr = U::Address< t >;

@@ -33,7 +33,7 @@ inline void PrintLine( const char* fmt, ... ) {
   vsprintf( buf, fmt, args );
   va_end( args );
 
-  printf( "\r\33[2L\r" );
+  printf( "\r\33[2L" );
   printf( "%s", buf );
 
   fflush( stdout );

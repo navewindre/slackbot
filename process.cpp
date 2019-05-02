@@ -1,12 +1,15 @@
 #include "process.h"
+#include "address.h"
 #include "util.h"
 
 #include <dirent.h>
 #include <fcntl.h>
 #include <fstream>
+#include <iterator>
 #include <sstream>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <vector>
 
 namespace P {
 bool Process::Valid( ) {
@@ -85,5 +88,42 @@ Module_t Process::FindModule( const char* name ) {
   }
 
   return ret;
+}
+
+uintptr_t Process::PatternSearch( Module_t mod, std::string pattern, size_t offset ) {
+  auto bin_match = []( uint8_t* code, uint8_t* pattern, size_t size ) -> bool {
+    for( size_t i = 0; i < size; ++i ) {
+      if( pattern[ i ] && code[ i ] != pattern[ i ] )
+        return false;
+    }
+
+    return true;
+  };
+
+  std::istringstream         iss( pattern );
+  std::vector< std::string > tokens{std::istream_iterator< std::string >{iss},
+                                    std::istream_iterator< std::string >{}};
+
+  std::vector< uint8_t > sig_bytes;
+
+  for( auto hex_byte : tokens ) {
+    sig_bytes.push_back( ( uint8_t )( std::strtoul( hex_byte.c_str( ), nullptr, 16 ) ) );
+  }
+
+  if( sig_bytes.size( ) < 2 )
+    return 0;  // sanity check
+
+  AutoAlloc< uint8_t > buffer( 1024 );
+
+  for( uintptr_t offset = 0; offset < mod.Size( ); offset += buffer.Size( ) ) {
+    Read( mod.start + offset, buffer.Get( ), buffer.Size( ) );
+    for( size_t i{}; i < buffer.Size( ); ++i ) {
+      if( bin_match( buffer.Get( ), sig_bytes.data( ), sig_bytes.size( ) ) ) {
+        return mod.start + offset;
+      }
+    }
+  }
+
+  return 0;
 }
 }
