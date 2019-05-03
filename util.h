@@ -3,9 +3,9 @@
 #include "auto_alloc.h"
 
 #include <cstdarg>
+#include <cstdio>
 #include <cstring>
 #include <dirent.h>
-#include <stdio.h>
 #include <thread>
 #include <unistd.h>
 

@@ -17,9 +17,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <thread>
-#include <unistd.h>
-
+#include "console.h"
 #include "process.h"
 #include "util.h"
 
@@ -51,7 +49,7 @@ const char* logo =
 void PrintLogo( ) {
   std::string ver = std::string( __DATE__ ) + " " + std::string( __TIME__ );
 
-  system( "clear" );
+  printf( "\033[H\033[J" );
   for( size_t i = 0; i < 100; ++i )
     printf( "\n" );
 
@@ -82,7 +80,19 @@ int main( int argc, char** argv ) {
 
   U::PrintLine( "Init done!\n" );
 
+  g_conMgr.InitHandler( );
+
+  std::thread cheat_thread( [&]( ) {
+    for( ;; ) {
+      // call cheat funcs here
+
+      sleep_for( 1ms );
+    }
+  } );
+
+  cheat_thread.detach( );
+
   for( ;; ) {
-    sleep_for( 300ms );
+    g_conMgr.OnMainLoop( );
   }
 };

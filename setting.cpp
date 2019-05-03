@@ -1,5 +1,9 @@
 #include "setting.h"
+#include "settings.h"
 #include "util.h"
+
+D::SettingHolder D::Holder;
+D::Settings      g_cfg;
 
 const char* GetPath( ) {
   static char out_dir[ PATH_MAX ];
