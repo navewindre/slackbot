@@ -76,7 +76,11 @@ int main( int argc, char** argv ) {
       g_proc.m_client = g_proc.FindModule( "client_panorama_client.so" );
     if( !g_proc.m_engine )
       g_proc.m_engine = g_proc.FindModule( "engine_client.so" );
+
+    sleep_for( 300ms );
   } while( !g_proc.m_client || !g_proc.m_engine );
+
+  U::PrintLine( "Init done!\n" );
 
   for( ;; ) {
     sleep_for( 300ms );
