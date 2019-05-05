@@ -12,6 +12,6 @@ target_include_directories(slackbot PRIVATE
 
 add_compile_options( -lreadline )
 
-set( CMAKE_CXX_FLAGS "-lreadline -ltermcap -std=gnu++17" )
+set( CMAKE_CXX_FLAGS "-lreadline -ltermcap -lpthread  -std=gnu++17" )
 
 message( STATUS, "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")

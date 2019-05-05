@@ -118,7 +118,7 @@ uintptr_t Process::PatternSearch( Module_t mod, std::string pattern, size_t offs
   for( uintptr_t offset = 0; offset < mod.Size( ); offset += buffer.Size( ) ) {
     Read( mod.start + offset, buffer.Get( ), buffer.Size( ) );
     for( size_t i{}; i < buffer.Size( ); ++i ) {
-      if( bin_match( buffer.Get( ), sig_bytes.data( ), sig_bytes.size( ) ) ) {
+      if( bin_match( buffer.Get( ) + i, sig_bytes.data( ), sig_bytes.size( ) ) ) {
         return mod.start + offset;
       }
     }

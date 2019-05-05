@@ -18,6 +18,7 @@
 */
 
 #include "console.h"
+#include "entity_list.h"
 #include "process.h"
 #include "util.h"
 
@@ -85,7 +86,7 @@ int main( int argc, char** argv ) {
   std::thread cheat_thread( [&]( ) {
     for( ;; ) {
       // call cheat funcs here
-
+      g_entityList.Update( );
       sleep_for( 1ms );
     }
   } );

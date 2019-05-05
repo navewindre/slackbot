@@ -38,4 +38,4 @@ public:
 };
 }
 
-template < typename t > using ptr = U::Address< t >;
+template < typename t = uintptr_t > using ptr = U::Address< t >;

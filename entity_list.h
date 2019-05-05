@@ -10,15 +10,22 @@ class EntityList {
 public:
   void Update( );
 
-  auto Get( size_t idx ) {
+  template < typename t = Entity > t Get( size_t idx ) {
     m_mutex.lock( );
-    auto ret = m_entities.at( idx );
+    auto ret = ( t )m_entities.at( idx );
     m_mutex.unlock( );
 
     return ret;
   }
 
 private:
+  struct CEntInfo {
+    uintptr_t m_Entity;
+    long      m_Serial;
+    uintptr_t m_Next;
+    uintptr_t m_Prev;
+  };
+
   std::mutex m_mutex;
   std::array< Entity, 65 > m_entities;
 };

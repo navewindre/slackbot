@@ -4,9 +4,12 @@
 #include <type_traits>
 #include <vector>
 
+#include "util.h"
+
 namespace D {
 constexpr const char* SETTINGS_FILENAME = ".slack_settings.dat";
 
+extern const char* GetPath( );
 extern void Save( const char* name, const void* src, size_t size );
 extern void Load( const char* name, void* dest, size_t size );
 
@@ -33,6 +36,9 @@ public:
   }
 
   void Save( ) {
+    if( U::FileExists( GetPath( ) ) )
+      remove( GetPath( ) );
+
     for( auto& it : m_nodes )
       it->Save( );
   }
@@ -62,7 +68,7 @@ public:
   }
 
   void Load( ) override { ::D::Load( m_name, &m_value, sizeof( t ) ); }
-  void Save( ) override { ::D::Save( m_name, &m_name, sizeof( t ) ); }
+  void Save( ) override { ::D::Save( m_name, &m_value, sizeof( t ) ); }
 
   bool IsIntegral( ) override { return std::is_integral< t >::value && !IsBoolean( ); }
   bool IsDecimal( ) override { return std::is_floating_point< t >::value; }

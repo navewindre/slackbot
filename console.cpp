@@ -3,7 +3,9 @@
 static const U::ConsoleMgr::HelpCmdStruct CMD_TIP_LIST[] = {
     {"help", "shows available commands"},
     {"var [set/get] [variable] [value]", "sets/prints a variable value"},
-    {"print_vars", "shows a list of all available variables"}};
+    {"print_vars", "shows a list of all available variables"},
+    {"config [save/load]", "saves/loads current configuration"},
+    {"exit", "saves config and exits"}};
 
 U::ConsoleMgr g_conMgr( &D::Holder );
 
@@ -30,26 +32,18 @@ void ConsoleMgr::OnReadLine( char* line ) {
   if( strstr( line, "print_vars" ) ) {
     PrintVars( );
   } else if( strstr( line, "var set" ) ) {
-    char  var_name[ 256 ];
-    float value;
-    sscanf( line, "%*s %*s %s %f", var_name, &value );
-
-    auto var = FindVar( var_name );
-    if( var )
-      SetVar( var, value );
-    else
-      printf( " Variable %s not found\n" );
+    CmdVarSet( line );
   } else if( strstr( line, "var get" ) ) {
-    char var_name[ 256 ];
-    sscanf( line, "%*s %*s %s", var_name );
-
-    auto var = FindVar( var_name );
-    if( var )
-      PrintVar( var );
-    else
-      printf( " Variable %s not found\n" );
+    CmdVarGet( line );
   } else if( strstr( line, "help" ) ) {
     PrintHelp( );
+  } else if( strstr( line, "exit" ) ) {
+    SaveConfig( );
+    exit( 0 );
+  } else if( strstr( line, "config save" ) ) {
+    SaveConfig( );
+  } else if( strstr( line, "config load" ) ) {
+    LoadConfig( );
   } else {
     printf( " Command not found\n" );
   }
@@ -102,6 +96,37 @@ void ConsoleMgr::SetVar( D::ISetting* var, float value ) {
   }
 }
 
+void ConsoleMgr::CmdVarSet( char* line ) {
+  char  var_name[ 256 ];
+  float value;
+
+  if( sscanf( line, "%*s %*s %s %f", var_name, &value ) != 2 ) {
+    printf( " Invalid syntax\n" );
+    return;
+  }
+
+  auto var = FindVar( var_name );
+  if( var )
+    SetVar( var, value );
+  else
+    printf( " Variable %s not found\n" );
+}
+
+void ConsoleMgr::CmdVarGet( char* line ) {
+  char var_name[ 256 ];
+
+  if( sscanf( line, "%*s %*s %s", var_name ) != 1 ) {
+    printf( " Invalid syntax\n" );
+    return;
+  }
+
+  auto var = FindVar( var_name );
+  if( var )
+    PrintVar( var );
+  else
+    printf( " Variable %s not found\n" );
+}
+
 void ConsoleMgr::PrintHelp( ) {
   size_t tip_count = sizeof( CMD_TIP_LIST ) / sizeof( HelpCmdStruct );
 
@@ -110,5 +135,15 @@ void ConsoleMgr::PrintHelp( ) {
     auto& tip = CMD_TIP_LIST[ i ];
     printf( " \033[34m%s\033[0m - %s\n", tip.cmd_name, tip.cmd_tip );
   }
+}
+
+void ConsoleMgr::SaveConfig( ) {
+  printf( " Saving config file to %s\n", D::GetPath( ) );
+  m_holder->Save( );
+}
+
+void ConsoleMgr::LoadConfig( ) {
+  printf( " Loading config from %s\n", D::GetPath( ) );
+  m_holder->Load( );
 }
 }

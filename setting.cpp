@@ -5,7 +5,7 @@
 D::SettingHolder D::Holder;
 D::Settings      g_cfg;
 
-const char* GetPath( ) {
+const char* D::GetPath( ) {
   static char out_dir[ PATH_MAX ];
   static bool dir_set = false;
 
@@ -21,42 +21,46 @@ const char* GetPath( ) {
 }
 
 void D::Save( const char* name, const void* src, size_t size ) {
-  AutoAlloc< char > buffer( size * 2 + 1 );
-  const uint8_t*    data = ( const uint8_t* )( src );
+  char*          buffer = ( char* )alloca( size * 2 + 1 );
+  const uint8_t* data = ( const uint8_t* )( src );
+
+  memset( buffer, 0, size * 2 + 1 );
 
   for( size_t i = 0; i < size; ++i ) {
-    sprintf( &( buffer.Get( )[ 2 * i ] ), "%02x", data[ i ] );
+    sprintf( &buffer[ 2 * i ], "%02x", data[ i ] );
   }
 
-  FILE* f = fopen( GetPath( ), "w+" );
+  FILE* f = fopen( GetPath( ), "ab" );
   if( !f )
     return;
 
-  fprintf( f, "%s=%s\n", name, buffer.Get( ) );
+  fprintf( f, "\n%s=%s \n", name, buffer );
   fflush( f );
 
   fclose( f );
 }
 
 void D::Load( const char* name, void* dest, size_t size ) {
-  AutoAlloc< char > buffer( size * 2 + 1 );
-  uint8_t*          data = ( uint8_t* )( dest );
+  char*    buffer = ( char* )alloca( size * 2 + 1 );
+  uint8_t* data = ( uint8_t* )( dest );
+
+  memset( buffer, 0, size * 2 + 1 );
 
   FILE* f = fopen( GetPath( ), "rb" );
   if( !f )
     return;
 
-  std::string key = std::string( name ) + "=%s";
-  fscanf( f, key.c_str( ), buffer.Get( ) );
+  std::string key = std::string( "\n" ) + std::string( name ) + "=%s %*c";
+  printf( "%d\n", fscanf( f, key.c_str( ), buffer ) );
 
   fclose( f );
 
-  if( !buffer.At( 0 ) )
+  if( !buffer[ 0 ] )
     return;
 
   for( size_t i = 0; i < size; ++i ) {
     unsigned temp;
-    sscanf( &( buffer.Get( )[ 2 * i ] ), "%02X", &temp );
+    sscanf( &buffer[ 2 * i ], "%02x", &temp );
     data[ i ] = temp;
   }
 }

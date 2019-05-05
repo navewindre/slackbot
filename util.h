@@ -49,4 +49,13 @@ inline void Log( const char* fmt, ... ) {
 
   fflush( stdout );
 }
+
+inline bool FileExists( const char* path ) {
+  if( FILE* f = fopen( path, "r" ) ) {
+    fclose( f );
+    return true;
+  }
+
+  return false;
+}
 }

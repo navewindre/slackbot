@@ -6,6 +6,9 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 
+#include <functional>
+#include <unordered_map>
+
 namespace U {
 class ConsoleMgr {
 public:
@@ -23,6 +26,12 @@ private:
   D::ISetting* FindVar( const char* varname );
 
   void PrintHelp( );
+
+  void CmdVarSet( char* line );
+  void CmdVarGet( char* line );
+
+  void SaveConfig( );
+  void LoadConfig( );
 
 public:
   struct HelpCmdStruct {
