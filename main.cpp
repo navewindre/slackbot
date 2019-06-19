@@ -63,30 +63,32 @@ int main( int argc, char** argv ) {
   int  cur_wait = 0;
   char wait[] = {'\\', '|', '/', '-', '\\', '|', '/', '-'};
 
-  do {
-    U::PrintLine( "Waiting for csgo %c", wait[ ++cur_wait % sizeof( wait ) ] );
-    sleep_for( 300ms );
-  } while( !g_proc.Attach( ) );
+  /*  do {
+      U::PrintLine( "Waiting for csgo %c", wait[ ++cur_wait % sizeof( wait ) ] );
+      sleep_for( 300ms );
+    } while( !g_proc.Attach( ) );
 
-  do {
-    U::PrintLine( "Waiting for modules %c", wait[ ++cur_wait % sizeof( wait ) ] );
+    do {
+      U::PrintLine( "Waiting for modules %c", wait[ ++cur_wait % sizeof( wait ) ] );
 
-    if( !g_proc.m_client )
-      g_proc.m_client = g_proc.FindModule( "client_panorama_client.so" );
-    if( !g_proc.m_engine )
-      g_proc.m_engine = g_proc.FindModule( "engine_client.so" );
+      if( !g_proc.m_client )
+        g_proc.m_client = g_proc.FindModule( "client_panorama_client.so" );
+      if( !g_proc.m_engine )
+        g_proc.m_engine = g_proc.FindModule( "engine_client.so" );
 
-    sleep_for( 300ms );
-  } while( !g_proc.m_client || !g_proc.m_engine );
+      sleep_for( 300ms );
+    } while( !g_proc.m_client || !g_proc.m_engine );
 
-  U::PrintLine( "Init done!\n" );
+    U::PrintLine( "Init done!\n" );
+  */
+  D::Holder.Load( );
 
   g_conMgr.InitHandler( );
 
   std::thread cheat_thread( [&]( ) {
     for( ;; ) {
       // call cheat funcs here
-      g_entityList.Update( );
+      // g_entityList.Update( );
       sleep_for( 1ms );
     }
   } );

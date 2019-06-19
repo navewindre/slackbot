@@ -30,11 +30,11 @@ void D::Save( const char* name, const void* src, size_t size ) {
     sprintf( &buffer[ 2 * i ], "%02x", data[ i ] );
   }
 
-  FILE* f = fopen( GetPath( ), "ab" );
+  FILE* f = fopen( GetPath( ), "a" );
   if( !f )
     return;
 
-  fprintf( f, "\n%s=%s \n", name, buffer );
+  fprintf( f, "%s = %s\n", name, buffer );
   fflush( f );
 
   fclose( f );
@@ -46,12 +46,28 @@ void D::Load( const char* name, void* dest, size_t size ) {
 
   memset( buffer, 0, size * 2 + 1 );
 
-  FILE* f = fopen( GetPath( ), "rb" );
+  FILE* f = fopen( GetPath( ), "r+" );
   if( !f )
     return;
 
-  std::string key = std::string( "\n" ) + std::string( name ) + "=%s %*c";
-  printf( "%d\n", fscanf( f, key.c_str( ), buffer ) );
+  char   read_name[ 64 ]{};
+  char*  line = nullptr;
+  size_t len = 128;
+
+  /*
+   * probably not the proper way
+   * don't wanna fuck with an entire ini parser
+  */
+  while( getline( &line, &len, f ) != -1 ) {
+    if( line ) {
+      sscanf( line, "%s = %s", read_name, buffer );
+      if( !strcmp( name, read_name ) )
+        break;
+
+      free( line );
+      line = nullptr;
+    }
+  }
 
   fclose( f );
 

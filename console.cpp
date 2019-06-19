@@ -17,7 +17,7 @@ void Con::ReadLineCallback( char* line ) {
 /****************************************/
 
 void ConsoleMgr::InitHandler( ) {
-  m_prompt = strdup( "slackbot\033[34m>\033[0m " );
+  m_prompt = strdup( "\033[34m:\033[0m " );
   rl_callback_handler_install( m_prompt, ( rl_vcpfunc_t* )( &Con::ReadLineCallback ) );
 }
 
